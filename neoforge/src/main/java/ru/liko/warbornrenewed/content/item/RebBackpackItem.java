@@ -1,5 +1,9 @@
 package ru.liko.warbornrenewed.content.item;
 
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
+import ru.liko.warbornrenewed.client.renderer.RebBackpackRenderer;
+import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -120,5 +124,21 @@ public class RebBackpackItem extends Item implements GeoItem {
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return cache;
+    }
+
+
+    @Override
+    public void initializeClient(Consumer<IClientItemExtensions> consumer) {
+        consumer.accept(new IClientItemExtensions() {
+            private RebBackpackRenderer renderer;
+
+            @Override
+            public BlockEntityWithoutLevelRenderer getCustomRenderer() {
+                if (renderer == null) {
+                    renderer = new RebBackpackRenderer(RebBackpackItem.this);
+                }
+                return renderer;
+            }
+        });
     }
 }

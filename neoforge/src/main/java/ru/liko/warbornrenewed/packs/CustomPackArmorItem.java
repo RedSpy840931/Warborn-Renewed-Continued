@@ -1,5 +1,8 @@
 package ru.liko.warbornrenewed.packs;
 
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import ru.liko.warbornrenewed.client.renderer.PackItemRenderer;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.ChatFormatting;
@@ -51,15 +54,24 @@ public class CustomPackArmorItem extends ArmorItem implements GeoItem {
     public void initializeClient(Consumer<IClientItemExtensions> consumer) {
         consumer.accept(new IClientItemExtensions() {
             private GeoArmorRenderer<CustomPackArmorItem> renderer;
+            private BlockEntityWithoutLevelRenderer itemRenderer;
 
             @Override
             public HumanoidModel<?> getHumanoidArmorModel(LivingEntity livingEntity, ItemStack stack,
-                    EquipmentSlot slot, HumanoidModel<?> defaultModel) {
+                                                          EquipmentSlot slot, HumanoidModel<?> defaultModel) {
                 if (renderer == null) {
                     renderer = new PackRenderer();
                 }
                 renderer.prepForRender(livingEntity, stack, slot, defaultModel);
                 return renderer;
+            }
+
+            @Override
+            public BlockEntityWithoutLevelRenderer getCustomRenderer() {
+                if (itemRenderer == null) {
+                    itemRenderer = new PackItemRenderer();
+                }
+                return itemRenderer;
             }
         });
     }

@@ -1,6 +1,5 @@
 package ru.liko.warbornrenewed.content.recipe;
 
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.HolderLookup;
@@ -16,41 +15,39 @@ import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import ru.liko.warbornrenewed.content.armorset.WarbornArmorItem;
+import ru.liko.warbornrenewed.packs.CustomPackArmorItem;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Custom recipe for dyeing WarbornArmorItem pieces
- * Similar to vanilla leather armor dyeing
- */
 public class DyeArmorRecipe extends CustomRecipe {
-
     public DyeArmorRecipe(CraftingBookCategory category) {
         super(category);
+    }
+
+    private static boolean isDyeable(ItemStack stack) {
+        return stack.getItem() instanceof WarbornArmorItem || stack.getItem() instanceof CustomPackArmorItem;
     }
 
     @Override
     public boolean matches(CraftingInput input, Level level) {
         ItemStack armor = ItemStack.EMPTY;
         List<ItemStack> dyes = new ArrayList<>();
-
         for (int i = 0; i < input.size(); i++) {
             ItemStack stack = input.getItem(i);
             if (!stack.isEmpty()) {
-                if (stack.getItem() instanceof WarbornArmorItem) {
+                if (isDyeable(stack)) {
                     if (!armor.isEmpty()) {
-                        return false; // Only one armor piece allowed
+                        return false;
                     }
                     armor = stack;
                 } else if (stack.getItem() instanceof DyeItem) {
                     dyes.add(stack);
                 } else {
-                    return false; // Invalid item
+                    return false;
                 }
             }
         }
-
         return !armor.isEmpty() && !dyes.isEmpty();
     }
 
@@ -65,7 +62,7 @@ public class DyeArmorRecipe extends CustomRecipe {
         for (int i = 0; i < input.size(); i++) {
             ItemStack stack = input.getItem(i);
             if (!stack.isEmpty()) {
-                if (stack.getItem() instanceof WarbornArmorItem armorItem) {
+                if (isDyeable(stack)) {
                     armor = stack.copy();
                     armor.setCount(1);
                     if (ru.liko.warbornrenewed.platform.Services.ITEM_DATA.hasArmorColor(armor)) {
@@ -99,8 +96,7 @@ public class DyeArmorRecipe extends CustomRecipe {
         int avgRed = totalRed / colorCount;
         int avgGreen = totalGreen / colorCount;
         int avgBlue = totalBlue / colorCount;
-        
-        // Find maximum color component across all added colors to preserve vibrance (vanilla logic)
+
         int maxColorSum = 0;
         if (ru.liko.warbornrenewed.platform.Services.ITEM_DATA.hasArmorColor(armor)) {
             int existingColor = ru.liko.warbornrenewed.platform.Services.ITEM_DATA.getArmorColor(armor);
@@ -109,6 +105,7 @@ public class DyeArmorRecipe extends CustomRecipe {
             int b = existingColor & 0xFF;
             maxColorSum += Math.max(r, Math.max(g, b));
         }
+
         for (int i = 0; i < input.size(); i++) {
             ItemStack stack = input.getItem(i);
             if (!stack.isEmpty() && stack.getItem() instanceof DyeItem dyeItem) {
@@ -119,10 +116,10 @@ public class DyeArmorRecipe extends CustomRecipe {
                 maxColorSum += Math.max(r, Math.max(g, b));
             }
         }
-        
+
         float averageMax = (float) maxColorSum / (float) colorCount;
         float maxAverage = (float) Math.max(avgRed, Math.max(avgGreen, avgBlue));
-        
+
         if (maxAverage > 0.0F) {
             avgRed = (int) ((float) avgRed * averageMax / maxAverage);
             avgGreen = (int) ((float) avgGreen * averageMax / maxAverage);
@@ -130,23 +127,20 @@ public class DyeArmorRecipe extends CustomRecipe {
         }
 
         int newColor = (avgRed << 16) | (avgGreen << 8) | avgBlue;
-
         ru.liko.warbornrenewed.platform.Services.ITEM_DATA.setArmorColor(armor, newColor);
-        
+
         return armor;
     }
 
     @Override
     public NonNullList<ItemStack> getRemainingItems(CraftingInput input) {
         NonNullList<ItemStack> remaining = NonNullList.withSize(input.size(), ItemStack.EMPTY);
-
         for (int i = 0; i < remaining.size(); i++) {
             ItemStack stack = input.getItem(i);
             if (stack.hasCraftingRemainingItem()) {
                 remaining.set(i, stack.getCraftingRemainingItem());
             }
         }
-
         return remaining;
     }
 
@@ -162,8 +156,8 @@ public class DyeArmorRecipe extends CustomRecipe {
 
     public static class Serializer implements RecipeSerializer<DyeArmorRecipe> {
         private static final MapCodec<DyeArmorRecipe> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-                CraftingBookCategory.CODEC.fieldOf("category").orElse(CraftingBookCategory.MISC)
-                        .forGetter(CustomRecipe::category))
+                        CraftingBookCategory.CODEC.fieldOf("category").orElse(CraftingBookCategory.MISC)
+                                .forGetter(CustomRecipe::category))
                 .apply(instance, DyeArmorRecipe::new));
 
         private static final StreamCodec<RegistryFriendlyByteBuf, DyeArmorRecipe> STREAM_CODEC = StreamCodec.of(

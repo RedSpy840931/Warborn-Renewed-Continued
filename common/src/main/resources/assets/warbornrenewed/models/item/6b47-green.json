@@ -1,7 +1,31 @@
-{
-  "parent": "item/generated",
-  "textures": {
-    "layer0": "warbornrenewed:item/6b47-green"
+﻿{
+  "parent": "builtin/entity",
+  "gui_light": "front",
+  "display": {
+    "gui": {
+      "rotation": [15, -135, 0],
+      "translation": [0, -35, -10],
+      "scale": [1.25, 1.25, 1.25]
+    },
+    "ground": {
+      "rotation": [0, 0, 0],
+      "translation": [0, -20, 0],
+      "scale": [0.75, 0.75, 0.75]
+    },
+    "fixed": {
+      "rotation": [0, 180, 0],
+      "translation": [0, -20, 0],
+      "scale": [0.75, 0.75, 0.75]
+    },
+    "thirdperson_righthand": {
+      "rotation": [75, 45, 0],
+      "translation": [0, 0, -20],
+      "scale": [0.75, 0.75, 0.75]
+    },
+    "firstperson_righthand": {
+      "rotation": [0, 45, 0],
+      "translation": [0, -20, 0],
+      "scale": [0.75, 0.75, 0.75]
+    }
   }
 }
-

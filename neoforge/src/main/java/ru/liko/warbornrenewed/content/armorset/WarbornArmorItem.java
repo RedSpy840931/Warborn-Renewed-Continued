@@ -1,5 +1,8 @@
 package ru.liko.warbornrenewed.content.armorset;
 
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import ru.liko.warbornrenewed.client.renderer.WarbornArmorItemRenderer;
+
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
@@ -99,15 +102,24 @@ public class WarbornArmorItem extends ArmorItem implements GeoItem {
     public void initializeClient(Consumer<IClientItemExtensions> consumer) {
         consumer.accept(new IClientItemExtensions() {
             private WarbornArmorRenderer renderer;
+            private BlockEntityWithoutLevelRenderer itemRenderer;
 
             @Override
             public HumanoidModel<?> getHumanoidArmorModel(LivingEntity livingEntity, ItemStack stack,
-                    EquipmentSlot slot, HumanoidModel<?> defaultModel) {
+                                                          EquipmentSlot slot, HumanoidModel<?> defaultModel) {
                 if (renderer == null) {
                     renderer = new WarbornArmorRenderer(visuals, bones);
                 }
                 renderer.prepForRender(livingEntity, stack, slot, defaultModel);
                 return renderer;
+            }
+
+            @Override
+            public BlockEntityWithoutLevelRenderer getCustomRenderer() {
+                if (itemRenderer == null) {
+                    itemRenderer = new WarbornArmorItemRenderer(visuals);
+                }
+                return itemRenderer;
             }
         });
     }

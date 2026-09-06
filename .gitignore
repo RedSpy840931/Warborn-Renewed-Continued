@@ -1,35 +1,54 @@
-# Project exclude paths (all subprojects)
+# Gradle & сборка
 .gradle/
 build/
+*/build/
+out/
+*/out/
+bin/
+*/bin/
 
-# IDE / OS
+# Скомпилированные JAR (кроме обёртки Gradle Wrapper)
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
+
+# Директории запуска Minecraft, логи и дампы
+run/
+*/run/
+run-data/
+*/run-data/
+logs/
+*/logs/
+crash-reports/
+*/crash-reports/
+hs_err_pid*
+replay_pid*
+
+# IDE (IntelliJ IDEA, VS Code, Eclipse)
 .idea/
 *.iml
 *.ipr
 *.iws
 .vscode/
 .settings/
+*/.settings/
 .classpath
+*/.classpath
 .project
+*/.project
+.eclipse/
+*/.eclipse/
 
-# Run dirs / generated
-run/
-run-data/
-logs/
-bin/
-out/
-
-# Local tooling / scratch
+# Локальные тулы и сторонние репозитории
 .claude/
 /TACZ/
 /WARBORN-1.20.1/
 
-# Temp fix scripts
+# Временные скрипты и отчеты
 fix*.ps1
 build_error.txt
 build_output.txt
 
-# macOS / Windows noise
+# Системные файлы OS
 .DS_Store
 Thumbs.db
 desktop.ini

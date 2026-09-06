@@ -24,6 +24,9 @@ public class ArmorDef {
     @SerializedName("material")
     private String material;
 
+    @SerializedName("icon")
+    private String icon;
+
     /**
      * Отображаемое имя предмета (по умолчанию, если нет мультиязычной версии).
      * Если указано — используется напрямую в игре.
@@ -114,6 +117,13 @@ public class ArmorDef {
         this.names = names;
     }
 
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
     /**
      * Получить отображаемое имя для указанной локали.
      * Приоритет: names[locale] -> name -> id
